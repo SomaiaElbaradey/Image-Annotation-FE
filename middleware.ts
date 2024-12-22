@@ -1,18 +1,19 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-import { auth } from "./lib/server/firebase";
-
 const protectedRoutes = ["/tasks", "/"];
 
 export async function middleware(request: NextRequest) {
-    const user = auth.currentUser;
+    if (protectedRoutes.includes(request.nextUrl.pathname)) {
+        const token = request.cookies.get("token")?.value;
+        const userData = request.cookies.get("userData")?.value;
 
-    console.log(user, "user");
+        if (!token || !userData) {
+            const absoluteURL = new URL("/login", request.nextUrl.origin);
+            return NextResponse.redirect(absoluteURL.toString());
+        }
 
-    if (!user && protectedRoutes.includes(request.nextUrl.pathname)) {
-        const absoluteURL = new URL("/login", request.nextUrl.origin);
-        return NextResponse.redirect(absoluteURL.toString());
+        return NextResponse.next();
     }
 }
 
