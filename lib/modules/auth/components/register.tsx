@@ -1,114 +1,100 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-
+import { useForm } from "react-hook-form";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "@/hooks/useAuth";
 
-import { auth } from "@/lib/server/firebase";
+import { RegisterInputs, registerSchema } from "../schemas/auth";
 
 export default function Register() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmation, setConfirmation] = useState("");
-    const [error, setError] = useState("");
-
-    const router = useRouter();
-
-    async function handleSubmit(event: FormEvent) {
-        event.preventDefault();
-
-        setError("");
-
-        if (password !== confirmation) {
-            setError("Passwords don't match");
-            return;
-        }
-
-        try {
-            await createUserWithEmailAndPassword(auth, email, password);
-            router.push("/login");
-        } catch (err) {
-            console.log((err as Error).message, 'err');
-            setError((err as Error).message);
-        }
-    }
+    const { register: registerUser, error, isLoading } = useAuth();
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<RegisterInputs>({
+        resolver: zodResolver(registerSchema),
+    });
 
     return (
-        <main className="flex min-h-screen flex-col items-center justify-center p-8">
-            <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800">
-                <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+        <main className="flex min-h-screen items-center justify-center p-4 sm:p-8 bg-gray-50">
+            <div className="w-full max-w-md bg-white rounded-lg shadow-md">
+                <div className="p-6 space-y-4 md:space-y-6">
                     <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
-                        Pray tell, who be this gallant soul seeking entry to mine humble
-                        abode?
+                        Register for an account
                     </h1>
                     <form
-                        onSubmit={handleSubmit}
+                        onSubmit={handleSubmit(registerUser)}
                         className="space-y-4 md:space-y-6"
-                        action="#"
                     >
                         <div>
                             <label
                                 htmlFor="email"
-                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                className="block mb-2 text-sm font-medium text-gray-900"
                             >
                                 Your email
                             </label>
                             <input
+                                {...register("email")}
                                 type="email"
-                                name="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
                                 id="email"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block 
-                                             w-full p-2.5"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                                 placeholder="name@company.com"
-                                required
+                                aria-invalid={errors.email ? "true" : "false"}
                             />
+                            {errors.email && (
+                                <p className="mt-1 text-sm text-red-600" role="alert">
+                                    {errors.email.message}
+                                </p>
+                            )}
                         </div>
                         <div>
                             <label
                                 htmlFor="password"
-                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                className="block mb-2 text-sm font-medium text-gray-900"
                             >
                                 Password
                             </label>
                             <input
+                                {...register("password")}
                                 type="password"
-                                name="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
                                 id="password"
                                 placeholder="••••••••"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 
-                                            block w-full p-2.5 "
-                                required
+                                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                                aria-invalid={errors.password ? "true" : "false"}
                             />
+                            {errors.password && (
+                                <p className="mt-1 text-sm text-red-600" role="alert">
+                                    {errors.password.message}
+                                </p>
+                            )}
                         </div>
                         <div>
                             <label
                                 htmlFor="confirm-password"
-                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                className="block mb-2 text-sm font-medium text-gray-900"
                             >
                                 Confirm password
                             </label>
                             <input
+                                {...register("confirmation")}
                                 type="password"
-                                name="confirm-password"
-                                value={confirmation}
-                                onChange={(e) => setConfirmation(e.target.value)}
                                 id="confirm-password"
                                 placeholder="••••••••"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block 
-                                             w-full p-2.5 0"
-                                required
+                                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                                aria-invalid={errors.confirmation ? "true" : "false"}
                             />
+                            {errors.confirmation && (
+                                <p className="mt-1 text-sm text-red-600" role="alert">
+                                    {errors.confirmation.message}
+                                </p>
+                            )}
                         </div>
                         {error && (
                             <div
-                                className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+                                className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg"
                                 role="alert"
                             >
                                 <span className="block sm:inline">{error}</span>
@@ -116,16 +102,16 @@ export default function Register() {
                         )}
                         <button
                             type="submit"
-                            className="w-full text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg 
-                                        text-sm px-5 py-2.5 text-center"
+                            className="w-full text-white bg-gray-600 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:opacity-50"
+                            disabled={isLoading}
                         >
-                            Create an account
+                            {isLoading ? "Creating account..." : "Create an account"}
                         </button>
-                        <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+                        <p className="text-sm font-light text-gray-500">
                             Already have an account?{" "}
                             <Link
                                 href="/login"
-                                className="font-medium text-gray-600 hover:underline dark:text-gray-500"
+                                className="font-medium text-gray-600 hover:underline"
                             >
                                 Login here
                             </Link>
