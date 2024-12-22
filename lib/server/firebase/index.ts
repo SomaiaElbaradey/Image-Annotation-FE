@@ -1,7 +1,8 @@
 import { getFirestore } from "firebase/firestore";
-import firebaseApp from "./config";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
+
+import firebaseApp from "./config";
 
 const db = getFirestore(firebaseApp);
 
