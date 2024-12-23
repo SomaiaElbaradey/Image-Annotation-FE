@@ -4,11 +4,10 @@ import type { NextRequest } from "next/server";
 const protectedRoutes = ["/tasks"];
 
 export async function middleware(request: NextRequest) {
-    const token = request.cookies.get("token")?.value;
-    const userData = request.cookies.get("userData")?.value;
+    const user = request.cookies.get("user")?.value;
 
     if (protectedRoutes.includes(request.nextUrl.pathname)) {
-        if (!token || !userData) {
+        if (!user) {
             const absoluteURL = new URL("/login", request.nextUrl.origin);
             return NextResponse.redirect(absoluteURL.toString());
         }
