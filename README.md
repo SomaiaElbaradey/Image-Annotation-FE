@@ -137,14 +137,6 @@ NEXT_PUBLIC_FIREBASE_API_KEY='AIzaSyA2E6evEJUCuR9Q4S8_ezF0fITEbIlgKpI'
     USE_SECURE_COOKIES=false
     FIREBASE_ADMIN_CLIENT_EMAIL='firebase-adminsdk-80y22@image-annotation-d0224.iam.gserviceaccount.com'
   ```
-### To See sample of the work, Please Login using 
-```bash
-email: somayaelbarade@gmail.com
-password: 123456
-```
-
-![image](https://github.com/user-attachments/assets/71e32d95-f17c-4b6a-b5f2-6c84ce3c8e7d)
-![image](https://github.com/user-attachments/assets/c5cd9a46-d8b2-4261-b16c-0a12a727f7b2)
 
 
 
@@ -156,7 +148,15 @@ password: 123456
 5. **Access the app:**
    Visit `http://localhost:3000` in your browser.
 
----
+### To See sample of the work, Please Login using 
+```bash
+email: somayaelbarade@gmail.com
+password: 123456
+```
+
+<img src="https://github.com/user-attachments/assets/71e32d95-f17c-4b6a-b5f2-6c84ce3c8e7d" height="400" />
+<img src="https://github.com/user-attachments/assets/c5cd9a46-d8b2-4261-b16c-0a12a727f7b2" height="400" />
+
 
 ## Assumptions
 - Each task is assigned to a single user.
