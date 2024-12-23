@@ -97,19 +97,20 @@ export default function CanvasAnnotation() {
         }
     };
 
-    // const handleNextTask = () => {
-    //     if (currentTaskIndex < tasks.length - 1) {
-    //         console.log("currentTaskIndex", tasks);
-    //         setCurrentTaskIndex(currentTaskIndex + 1);
-    //     } else {
-    //         setError('No more tasks available.');
-    //     }
-    // };
+    const handleNextTask = () => {
+        handleSave()
+        if (currentTaskIndex < tasks.length - 1) {
+            console.log("currentTaskIndex", tasks);
+            setCurrentTaskIndex(currentTaskIndex + 1);
+        } else {
+            setError('No more tasks available.');
+        }
+    };
 
     const fetchTasks = async (userId: string) => {
         try {
-            const q = query(collection(db, 'tasks'), where('assignedTo', '==', userId));
-            const querySnapshot = await getDocs(q);
+            const tasksQuery = query(collection(db, 'tasks'), where('assignedTo', '==', userId));
+            const querySnapshot = await getDocs(tasksQuery);
             const fetchedTasks: Task[] = [];
             querySnapshot.forEach((doc) => {
                 fetchedTasks.push({ id: doc.id, ...doc.data() } as Task);
@@ -118,7 +119,6 @@ export default function CanvasAnnotation() {
             setAnnotations(fetchedTasks[0].annotations);
         } catch (err) {
             console.log(err);
-
             setError('Failed to fetch tasks. Please try again.');
         }
     };
@@ -215,7 +215,12 @@ export default function CanvasAnnotation() {
                     ))}
                 </ul>
             </div>
-
+            <button
+                onClick={handleNextTask}
+                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            >
+                Next Task
+            </button>
             <div className="mt-4">
                 <h3 className="text-xl font-bold mb-2">Task Progress:</h3>
                 <p>{currentTaskIndex + 1} of {tasks.length}</p>
