@@ -6,6 +6,8 @@ import firebaseApp from "./config";
 
 const db = getFirestore(firebaseApp);
 
+export * from "./utils";
+
 export const auth = getAuth(firebaseApp);
 export const storage = getStorage(firebaseApp);
 
