@@ -44,7 +44,7 @@ export const useAuth = () => {
             auth.onAuthStateChanged(async (user) => {
                 if (user) {
                     await setSessionCookie("user", JSON.stringify(user));
-                    router.push("/tasks");
+                    router.push("/image-annotation");
                 } else {
                     deleteSessionCookie("user");
                     router.push("/login");

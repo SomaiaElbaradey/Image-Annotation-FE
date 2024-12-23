@@ -5,7 +5,8 @@ import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useAuth } from "@/hooks/useAuth";
+
+import { useAuth } from "@/lib/modules/auth/hooks";
 
 import { LoginInputs, loginSchema } from "../schemas/auth";
 
