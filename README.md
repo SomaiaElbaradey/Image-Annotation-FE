@@ -1,36 +1,152 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FE - Image Annotation
 
-## Getting Started
+## Developer Challenge
+This project is a simple frontend application that enables end users to annotate images by drawing rectangles, adding text annotations, and saving their work. The application also includes task management functionality and authentication.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Features Completed
+
+### 1. Image Annotation Interface:
+- Users can draw rectangles using the mouse or touchscreen.
+- Users can write annotations for each rectangle.
+- Annotations and rectangles persist when the user revisits the task.
+- Enable rendering saved annotations back on the image.
+- Provide a “Next” button to save the current annotation and move to the next assigned task.
+
+### 2. Error Handling:
+- Display clear error messages for scenarios like:
+  - Invalid credentials during login.
+
+### 3. Security:
+- Restrict access to tasks based on user authentication.
+- Secure Firebase rules to ensure users cannot access unauthorized data.
+
+### 4. Firebase Integration:
+- **Authentication:** Implemented using email/password authentication.
+- **Database:** Firebase Firestore used to manage tasks, annotations, and user assignments.
+
+---
+
+## Features Pending
+
+### Image Annotation Interface
+- Allow users to upload an image for annotation.
+
+### Task Navigation
+- Display the list of completed tasks and their corresponding annotations.
+- Include navigation between tasks (e.g., "Previous", "Next").
+
+### Task Management
+- Display a task list with filters (e.g., by status: Pending, In Progress, Completed).
+
+### Input Validation
+- Validate annotation inputs to prevent empty or invalid annotations.
+
+### Performance Optimization
+- Handle large images and tasks efficiently.
+
+### Real-Time Updates
+- Implement real-time updates using Firestore for tasks and annotations.
+
+### UI Enhancements
+- Add a progress bar to indicate the number of completed tasks.
+- Support undo/redo for annotation actions.
+
+### Testing
+- Write unit tests for key components.
+- Include integration tests for task management and annotation workflows.
+
+---
+
+## Tech Stack
+
+### Frontend
+- **Framework:** Next.js
+- **Canvas:** HTML5 Canvas API for drawing annotations
+
+### Backend
+- **Database:** Firebase Firestore for task and annotation storage
+- **Authentication:** Firebase Authentication (email/password)
+- **Storage:** Firebase Storage for media handling
+
+---
+
+## Database Structure
+
+### Users Collection:
+```json
+{
+  "userId": "unique_identifier",
+  "email": "user@example.com",
+  "tasks": ["taskId1", "taskId2"]
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Tasks Collection:
+```json
+{
+  "taskId": "unique_identifier",
+  "imageURL": "link_to_image",
+  "assignedTo": "userId",
+  "annotations": [
+    {
+      "x": 10,
+      "y": 20,
+      "width": 100,
+      "height": 50,
+      "annotation": "Example Text"
+    }
+  ],
+  "status": "Pending"
+}
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Setup Instructions
 
-## Learn More
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/SomaiaElbaradey/Image-Annotation-FE.git
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. **Set up Firebase:**
+   - Add your Firebase configuration to `.env.local`:
+     ```env
+    NEXT_PUBLIC_FIREBASE_API_KEY='AIzaSyA2E6evEJUCuR9Q4S8_ezF0fITEbIlgKpI'
+    NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN='image-annotation-d0224.firebaseapp.com'
+    NEXT_PUBLIC_FIREBASE_PROJECT_ID='image-annotation-d0224'
+    NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET='image-annotation-d0224.firebasestorage.app'
+    NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID='470621586335'
+    NEXT_PUBLIC_FIREBASE_APP_ID='1:470621586335:web:b6862a4600e9df3aeaf3aa'
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+    AUTH_COOKIE_NAME='AuthToken'
+    AUTH_COOKIE_SIGNATURE_KEY_CURRENT='secret1'
+    AUTH_COOKIE_SIGNATURE_KEY_PREVIOUS='secret2'
 
-## Deploy on Vercel
+    NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID='G-4'
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+     ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. **Run the application:**
+   ```bash
+   npm run dev
+   ```
+
+5. **Access the app:**
+   Visit `http://localhost:3000` in your browser.
+
+---
+
+## Assumptions
+- Each task is assigned to a single user.
+- Users can only see their assigned tasks.
+- Firebase rules are configured to ensure secure access.
+
+
