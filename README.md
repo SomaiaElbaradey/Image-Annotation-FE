@@ -119,8 +119,8 @@ This project is a simple frontend application that enables end users to annotate
 3. **Set up Firebase:**
    - Add your Firebase configuration to `.env.local`:
    here's a temp example to use:
-     ```env
-    NEXT_PUBLIC_FIREBASE_API_KEY='AIzaSyA2E6evEJUCuR9Q4S8_ezF0fITEbIlgKpI'
+ ```bash
+NEXT_PUBLIC_FIREBASE_API_KEY='AIzaSyA2E6evEJUCuR9Q4S8_ezF0fITEbIlgKpI'
     NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN='image-annotation-d0224.firebaseapp.com'
     NEXT_PUBLIC_FIREBASE_PROJECT_ID='image-annotation-d0224'
     NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET='image-annotation-d0224.firebasestorage.app'
@@ -136,7 +136,7 @@ This project is a simple frontend application that enables end users to annotate
 
     USE_SECURE_COOKIES=false
     FIREBASE_ADMIN_CLIENT_EMAIL='firebase-adminsdk-80y22@image-annotation-d0224.iam.gserviceaccount.com'
-     ```
+  ```
 
 4. **Run the application:**
    ```bash
