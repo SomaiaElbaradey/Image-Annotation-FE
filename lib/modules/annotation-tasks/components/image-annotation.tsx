@@ -11,7 +11,7 @@ import ImageUploader from "./image-uploader";
 import AnnotationList from "./annotation-list";
 
 import { StatusFilter } from "../schemas";
-import TaskStatusFilter from "./Task-filter";
+import TaskStatusFilter from "./task-filter";
 
 const PLACEHOLDER_IMG = '/images/placeholder.png';
 
