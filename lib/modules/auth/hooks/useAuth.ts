@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import {
@@ -8,6 +8,8 @@ import {
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     signOut,
+    onAuthStateChanged,
+    User,
 } from "firebase/auth";
 
 import app from "@/lib/server/firebase/config";
@@ -72,6 +74,7 @@ export const useAuth = () => {
                 data.email,
                 data.password
             );
+            setAuthState({ state: "authenticated" });
             router.push("/login");
         } catch (err) {
             setAuthState({
@@ -99,8 +102,26 @@ export const useAuth = () => {
         }
     };
 
+    const [user, setUser] = useState<User | null>(null);
+
+    useEffect(() => {
+        const auth = getAuth();
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setUser(user);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
     const authError = authState?.state === "error" ? authState.message : "";
     const isLoading = authState?.state === "loading";
 
-    return { login, register, error: authError, isLoading, logout };
+    return {
+        login,
+        register,
+        error: authError,
+        isLoading,
+        logout,
+        user,
+    } as const;
 };
