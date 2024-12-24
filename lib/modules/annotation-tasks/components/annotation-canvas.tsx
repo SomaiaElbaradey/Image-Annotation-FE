@@ -1,15 +1,15 @@
-import React from 'react';
-
 import { Annotation } from '../schemas';
 import { useCanvas } from '../hooks';
 
 interface AnnotationCanvasProps {
     annotations: Annotation[];
-    setAnnotations: React.Dispatch<React.SetStateAction<Annotation[]>>;
+    setAnnotations: (annotations: Annotation[]) => void;
+    imageUrl: string;
 }
 
-const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ annotations, setAnnotations }) => {
-    const { canvasRef, handleMouseDown, handleMouseMove, handleMouseUp } = useCanvas(annotations, setAnnotations);
+export default function AnnotationCanvas({ annotations, setAnnotations, imageUrl }: AnnotationCanvasProps) {
+    const { canvasRef, handleMouseDown, handleMouseMove, handleMouseUp } =
+        useCanvas(annotations, setAnnotations, imageUrl);
 
     return (
         <canvas
@@ -21,5 +21,3 @@ const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({ annotations, setAnn
         />
     );
 };
-
-export default AnnotationCanvas;
