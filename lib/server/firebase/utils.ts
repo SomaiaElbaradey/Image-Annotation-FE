@@ -25,9 +25,6 @@ export const uploadImage = async (
 
 export const updateTaskImageUrl = async (taskId: string, imageURL: string) => {
     const taskRef = doc(db, "tasks", taskId);
-    console.log("taskRef", taskRef);
-    console.log("imageURL", imageURL);
-
     await updateDoc(taskRef, { imageURL });
 };
 
@@ -36,6 +33,7 @@ export const saveAnnotations = async (
     annotations: Annotation[]
 ) => {
     const taskRef = doc(db, "tasks", taskId);
+
     await updateDoc(taskRef, {
         annotations: annotations,
         status: "Completed",

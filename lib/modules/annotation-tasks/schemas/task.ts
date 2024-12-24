@@ -6,3 +6,5 @@ export interface Task {
     status: "Pending" | "In Progress" | "Completed";
     annotations: Annotation[];
 }
+
+export type StatusFilter = Task["status"] | "All";
