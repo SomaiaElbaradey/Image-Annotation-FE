@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
 
 import db, { saveAnnotations } from "@/lib/server/firebase";
-import { Annotation, Task } from "../schemas";
+import { Annotation, Task, StatusFilter } from "../schemas";
 
 export const useTaskAnnotations = (userId: string | undefined) => {
     const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
@@ -12,7 +12,8 @@ export const useTaskAnnotations = (userId: string | undefined) => {
     const [annotations, setAnnotations] = useState<Annotation[]>([]);
     const [error, setError] = useState<string | null>(null);
 
-    const currentTask = tasks[currentTaskIndex];
+    const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
+    const [currentFilter, setCurrentFilter] = useState<StatusFilter>("All");
 
     useEffect(() => {
         const fetchTasks = async () => {
@@ -28,10 +29,11 @@ export const useTaskAnnotations = (userId: string | undefined) => {
                 });
 
                 setTasks(fetchedTasks);
+                setFilteredTasks(fetchedTasks);
                 if (fetchedTasks.length > 0)
                     setAnnotations(fetchedTasks[0].annotations || []);
             } catch (err) {
-                console.log(err);
+                console.error(err);
                 setError("Failed to fetch tasks. Please try again.");
             }
         };
@@ -40,45 +42,77 @@ export const useTaskAnnotations = (userId: string | undefined) => {
     }, [userId]);
 
     useEffect(() => {
-        if (tasks.length > 0) setAnnotations(currentTask.annotations || []);
-    }, [currentTask?.annotations, currentTaskIndex, tasks]);
+        setFilteredTasks(
+            currentFilter === "All"
+                ? tasks
+                : tasks.filter((task) => task.status === currentFilter)
+        );
+        setCurrentTaskIndex(0);
+    }, [currentFilter, tasks]);
 
-    const handleSave = async () => {
+    useEffect(() => {
+        if (filteredTasks.length > 0) {
+            setAnnotations(filteredTasks[currentTaskIndex].annotations || []);
+        }
+    }, [filteredTasks, currentTaskIndex]);
+
+    const currentTask = filteredTasks[currentTaskIndex];
+
+    const handleSave = async (status?: Task["status"]) => {
         try {
             await saveAnnotations(currentTask.id, annotations);
-            setTasks((prevTasks) =>
-                prevTasks.map((task, index) =>
-                    index === currentTaskIndex
-                        ? {
-                              ...task,
-                              annotations: annotations,
-                              status: "Completed",
-                          }
-                        : task
-                )
+            const updatedTasks = tasks.map((task) =>
+                task.id === currentTask.id
+                    ? {
+                          ...task,
+                          annotations: annotations,
+                          status: status || "Completed",
+                      }
+                    : task
+            );
+            setTasks(updatedTasks);
+            setFilteredTasks(
+                currentFilter === "All"
+                    ? updatedTasks
+                    : updatedTasks.filter(
+                          (task) => task.status === currentFilter
+                      )
             );
         } catch (err) {
-            console.log(err);
+            console.error(err);
             setError("Failed to save annotations. Please try again.");
         }
     };
 
-    const handleNextTask = async () => {
-        await handleSave();
-        if (currentTaskIndex < tasks.length - 1) {
-            setCurrentTaskIndex((prevIndex) => prevIndex + 1);
-        } else {
-            setError("No more tasks available.");
+    const handleNextTask = () => {
+        if (currentTaskIndex < filteredTasks.length - 1) {
+            setCurrentTaskIndex(currentTaskIndex + 1);
+            setAnnotations([]);
         }
+    };
+
+    const handlePreviousTask = () => {
+        if (currentTaskIndex > 0) {
+            setCurrentTaskIndex(currentTaskIndex - 1);
+            setAnnotations([]);
+        }
+    };
+
+    const setFilter = (filter: StatusFilter) => {
+        setCurrentFilter(filter);
     };
 
     return {
         currentTaskIndex,
-        tasks,
+        filteredTasks,
         annotations,
         setAnnotations,
         error,
         handleSave,
         handleNextTask,
+        handlePreviousTask,
+        setCurrentTaskIndex,
+        setFilter,
+        currentFilter,
     } as const;
 };

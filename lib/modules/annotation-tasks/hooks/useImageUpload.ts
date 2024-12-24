@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
+
 import { uploadImage, updateTaskImageUrl } from "@/lib/server/firebase";
 
 export const useImageUpload = (initialUrl: string, taskId: string) => {
@@ -14,8 +15,8 @@ export const useImageUpload = (initialUrl: string, taskId: string) => {
 
     const handleUpload = useCallback(async () => {
         if (!file) return;
-
         setUploading(true);
+
         try {
             const url = await uploadImage(file);
             const imageUrl = url || initialUrl;
