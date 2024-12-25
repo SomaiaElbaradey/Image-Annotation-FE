@@ -15,8 +15,12 @@ export const useTaskAnnotations = (userId: string | undefined) => {
     const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
     const [currentFilter, setCurrentFilter] = useState<StatusFilter>("All");
 
+    const [isLoading, setIsLoading] = useState(false);
+
     useEffect(() => {
         const fetchTasks = async () => {
+            setIsLoading(true);
+
             try {
                 const tasksQuery = query(
                     collection(db, "tasks"),
@@ -35,6 +39,8 @@ export const useTaskAnnotations = (userId: string | undefined) => {
             } catch (err) {
                 console.error(err);
                 setError("Failed to fetch tasks. Please try again.");
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -114,5 +120,7 @@ export const useTaskAnnotations = (userId: string | undefined) => {
         setCurrentTaskIndex,
         setFilter,
         currentFilter,
+        tasks,
+        isLoading,
     } as const;
 };
