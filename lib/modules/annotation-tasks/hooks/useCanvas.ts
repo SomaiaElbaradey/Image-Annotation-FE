@@ -23,9 +23,14 @@ export const useCanvas = (
             img.src = imageUrl;
 
             img.onload = () => {
-                canvas.width = img.width;
-                canvas.height = img.height;
-                ctx.drawImage(img, 0, 0);
+                const fixedWidth = 600;
+                const aspectRatio = img.width / img.height;
+                const fixedHeight = fixedWidth / aspectRatio;
+
+                canvas.width = fixedWidth;
+                canvas.height = fixedHeight;
+
+                ctx.drawImage(img, 0, 0, fixedWidth, fixedHeight);
 
                 annotations.forEach(({ x, y, width, height, text }) => {
                     ctx.strokeStyle = "red";
