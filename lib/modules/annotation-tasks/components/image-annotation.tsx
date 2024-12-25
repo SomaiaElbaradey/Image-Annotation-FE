@@ -4,19 +4,19 @@ import React, { useEffect } from "react";
 
 import { useTaskAnnotations } from "../hooks/useTaskAnnotations";
 import { useImageUpload } from "../hooks/useImageUpload";
-import { useAuth } from "../../auth/hooks";
+import { StatusFilter } from "../schemas";
+
+import { useUser } from "../../auth/hooks";
 
 import AnnotationCanvas from "./annotation-canvas";
 import ImageUploader from "./image-uploader";
 import AnnotationList from "./annotation-list";
-
-import { StatusFilter } from "../schemas";
 import TaskStatusFilter from "./task-filter";
 
 const PLACEHOLDER_IMG = '/images/placeholder.png';
 
 export default function CanvasAnnotation() {
-    const { user } = useAuth();
+    const { user } = useUser();
     const {
         currentTaskIndex,
         filteredTasks,
