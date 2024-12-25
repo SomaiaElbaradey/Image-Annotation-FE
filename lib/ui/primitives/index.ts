@@ -13,23 +13,9 @@ export {
     DialogRoot,
     useDialog,
 } from "./dialog";
-export {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuPortal,
-    DropdownMenuRadioGroup,
-    DropdownMenuRadioItem,
-    DropdownMenuSeparator,
-    DropdownMenuShortcut,
-    DropdownMenuSub,
-    DropdownMenuSubContent,
-    DropdownMenuSubTrigger,
-    DropdownMenuTrigger,
-} from "./dropdown";
+export * from "./dropdown";
 export { Input } from "./input";
 export { default as Label } from "./label";
 export { default as Typography } from "./typography";
+export { Progress } from "./progress";
+export * from "./table";
