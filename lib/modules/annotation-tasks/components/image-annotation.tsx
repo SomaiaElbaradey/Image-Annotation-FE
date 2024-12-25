@@ -2,6 +2,8 @@
 
 import React, { useEffect } from "react";
 
+import { Button, Progress, Spinner, Typography } from "@/lib/ui";
+
 import { useTaskAnnotations } from "../hooks/useTaskAnnotations";
 import { useImageUpload } from "../hooks/useImageUpload";
 import { StatusFilter } from "../schemas";
@@ -16,7 +18,7 @@ import TaskStatusFilter from "./task-filter";
 const PLACEHOLDER_IMG = '/images/placeholder.png';
 
 export default function CanvasAnnotation() {
-    const { user } = useUser();
+    const { user, isLoading } = useUser();
     const {
         currentTaskIndex,
         filteredTasks,
@@ -28,7 +30,9 @@ export default function CanvasAnnotation() {
         handlePreviousTask,
         setCurrentTaskIndex,
         setFilter,
-        currentFilter
+        currentFilter,
+        tasks,
+        isLoading: isTasksLoading,
     } = useTaskAnnotations(user?.uid);
 
     const currentTask = filteredTasks[currentTaskIndex];
@@ -44,58 +48,62 @@ export default function CanvasAnnotation() {
         }
     }, [filteredTasks, setAnnotations, setCurrentTaskIndex]);
 
-    if (!user)
-        return <div>Loading...</div>;
-
     const handleStatusChange = (status: StatusFilter) => {
         setFilter(status);
     };
 
+    const completedTasks = tasks.filter(task => task.status === 'Completed');
+
+    if (isLoading || isTasksLoading) return <Spinner />;
+
     return (
-        <div className="flex flex-col items-center mt-3">
+        <div className="flex flex-col items-center w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <TaskStatusFilter currentStatus={currentFilter} onStatusChange={handleStatusChange} />
-            {filteredTasks.length > 0 ?
+            {filteredTasks.length > 0 ? (
                 <>
-                    <ImageUploader
-                        handleFileChange={handleFileChange}
-                        handleUpload={handleUpload}
-                        uploading={uploading}
-                    />
-                    <AnnotationCanvas
-                        annotations={annotations}
-                        setAnnotations={setAnnotations}
-                        imageUrl={uploadedUrl}
-                    />
-                    <button
-                        onClick={() => handleSave()}
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2 mt-3"
-                    >
-                        Save Annotations
-                    </button>
-                    {error && <p className="text-red-500 mt-2">{error}</p>}
-                    <AnnotationList annotations={annotations} />
-                    <div className="flex justify-between w-full max-w-lg mt-4">
-                        <button
-                            onClick={handlePreviousTask}
-                            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-                            disabled={currentTaskIndex === 0}
-                        >
-                            Previous Task
-                        </button>
-                        <button
-                            onClick={handleNextTask}
-                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-                            disabled={currentTaskIndex === filteredTasks.length - 1}
-                        >
-                            Next Task
-                        </button>
+                    <div className="w-full">
+                        <Typography.ST1 className="font-bold">
+                            Task Progress: {completedTasks?.length} of {tasks.length}
+                        </Typography.ST1>
+                        <Progress
+                            value={((completedTasks?.length || 0) / tasks.length) * 100}
+                        />
                     </div>
-                    <div className="mt-4">
-                        <h3 className="text-xl font-bold mb-2">Task Progress:</h3>
-                        <p>{currentTaskIndex + 1} of {filteredTasks.length}</p>
+                    <div className="w-full lg:flex lg:flex-row lg:items-start lg:space-x-8">
+                        <div className="w-full lg:w-1/2 mb-8 lg:mb-0 mt-3">
+                            <AnnotationCanvas
+                                annotations={annotations}
+                                setAnnotations={setAnnotations}
+                                imageUrl={uploadedUrl}
+                            />
+                            {!currentTask?.imageURL && <ImageUploader
+                                handleFileChange={handleFileChange}
+                                handleUpload={handleUpload}
+                                uploading={uploading}
+                            />}
+                            <Button onClick={() => handleSave()} variant='primary'
+                                className="font-bold w-full lg:w-auto my-4"
+                                disabled={uploading || currentTask.status === "Completed"}>
+                                Save Annotations
+                            </Button>
+                        </div>
+                        <div className="w-full lg:w-1/2">
+                            {error && <p className="text-red-500 mt-2 mb-4">{error}</p>}
+                            <AnnotationList annotations={annotations} />
+                            <div className="flex justify-between w-full mb-6">
+                                <Button size='small' onClick={handlePreviousTask} variant='secondary' disabled={currentTaskIndex === 0}>
+                                    Previous Task
+                                </Button>
+                                <Button size='small' onClick={handleNextTask} variant='primary' disabled={currentTaskIndex === filteredTasks.length - 1}>
+                                    Next Task
+                                </Button>
+                            </div>
+                        </div>
                     </div>
                 </>
-                : <div>No tasks available for the current filter.</div>}
+            ) : (
+                <Typography.H2 className="text-center mt-8">No tasks available for the current filter.</Typography.H2>
+            )}
         </div>
     );
 }
