@@ -1,3 +1,4 @@
+import React from 'react';
 import { Annotation } from '../schemas';
 import { useCanvas } from '../hooks';
 
@@ -8,16 +9,19 @@ interface AnnotationCanvasProps {
 }
 
 export default function AnnotationCanvas({ annotations, setAnnotations, imageUrl }: AnnotationCanvasProps) {
-    const { canvasRef, handleMouseDown, handleMouseMove, handleMouseUp } =
+    const { canvasRef, containerRef, handleMouseDown, handleMouseMove, handleMouseUp } =
         useCanvas(annotations, setAnnotations, imageUrl);
 
     return (
-        <canvas
-            ref={canvasRef}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            className="border border-gray-400 cursor-crosshair"
-        />
+        <div ref={containerRef} className="w-full">
+            <canvas
+                ref={canvasRef}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                className="border border-gray-400 cursor-crosshair w-full h-auto"
+            />
+        </div>
     );
-};
+}
+
