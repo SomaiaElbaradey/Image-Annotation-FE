@@ -7,12 +7,10 @@ import {
     getAuth,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
-    signOut,
 } from "firebase/auth";
 
 import app from "@/lib/server/firebase/config";
 import { LoginInputs, RegisterInputs } from "@/lib/modules/auth/schemas/auth";
-import { auth } from "@/lib/server/firebase";
 import { deleteSessionCookie, setSessionCookie } from "@/lib/server/cookie";
 
 type UnAuthedState = {
@@ -83,22 +81,6 @@ export const useAuth = () => {
         }
     };
 
-    const logout = async () => {
-        setAuthState({ state: "loading" });
-
-        try {
-            await signOut(auth);
-            deleteSessionCookie("user");
-            router.push("/login");
-        } catch (err) {
-            setAuthState({
-                state: "error",
-                message:
-                    (err as Error).message || "An error occurred during logout",
-            });
-        }
-    };
-
     const authError = authState?.state === "error" ? authState.message : "";
     const isLoading = authState?.state === "loading";
 
@@ -107,6 +89,5 @@ export const useAuth = () => {
         register,
         error: authError,
         isLoading,
-        logout,
     } as const;
 };
