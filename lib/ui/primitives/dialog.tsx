@@ -41,7 +41,7 @@ const DialogCloseTrigger = (props: React.ComponentProps<'div'>) => (
 const DialogCloseIcon = ({ ...props }: React.ComponentProps<'div'>) => (
   <DialogCloseTrigger
     {...props}
-    className="absolute top-4 ltr:right-4 rtl:left-4"
+    className="absolute top-2 right-2 cursor-pointer"
   >
     <OutlinedClose />
   </DialogCloseTrigger>
