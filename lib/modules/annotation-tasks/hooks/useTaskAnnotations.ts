@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 
-import { collection, query, where, getDocs } from "firebase/firestore";
+import {
+    collection,
+    query,
+    where,
+    getDocs,
+    doc,
+    getDoc,
+} from "firebase/firestore";
 
 import db, { saveAnnotations } from "@/lib/server/firebase";
 import { Annotation, Task, StatusFilter } from "../schemas";
@@ -22,15 +29,32 @@ export const useTaskAnnotations = (userId: string | undefined) => {
             setIsLoading(true);
 
             try {
+                const userDocRef = doc(db, "users", userId!);
+                const userDoc = await getDoc(userDocRef);
+
+                if (!userDoc.exists())
+                    throw new Error("User document not found");
+
+                const taskIds = userDoc.data().tasks || [];
+
+                if (!Array.isArray(taskIds) || taskIds.length === 0) {
+                    setTasks([]);
+                    setFilteredTasks([]);
+                    setAnnotations([]);
+                    return;
+                }
+
                 const tasksQuery = query(
                     collection(db, "tasks"),
-                    where("assignedTo", "==", userId)
+                    where("__name__", "in", taskIds.slice(0, 10))
                 );
+
                 const querySnapshot = await getDocs(tasksQuery);
-                const fetchedTasks: Task[] = [];
-                querySnapshot.forEach((doc) => {
-                    fetchedTasks.push({ id: doc.id, ...doc.data() } as Task);
-                });
+
+                const fetchedTasks: Task[] = querySnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                })) as Task[];
 
                 setTasks(fetchedTasks);
                 setFilteredTasks(fetchedTasks);
