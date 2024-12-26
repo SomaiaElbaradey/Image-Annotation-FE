@@ -1,5 +1,6 @@
-import HomePage from "./HomePage";
+import { redirect } from 'next/navigation';
 
-export default async function Home() {
-  return <HomePage />;
+export default function Home() {
+  redirect('/image-annotation');
 }
+
