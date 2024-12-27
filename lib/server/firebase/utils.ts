@@ -4,7 +4,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 
 import db, { storage } from "@/lib/server/firebase";
-import { Annotation } from "@/lib/modules/annotation-tasks/schemas";
+import { Annotation, Task } from "@/lib/modules/annotation-tasks/schemas";
 
 export const uploadImage = async (
     file: File | undefined
@@ -30,12 +30,13 @@ export const updateTaskImageUrl = async (taskId: string, imageURL: string) => {
 
 export const saveAnnotations = async (
     taskId: string,
-    annotations: Annotation[]
+    annotations: Annotation[],
+    status?: Task["status"]
 ) => {
     const taskRef = doc(db, "tasks", taskId);
 
     await updateDoc(taskRef, {
         annotations: annotations,
-        status: "Completed",
+        status: status || "Completed",
     });
 };

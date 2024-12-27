@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import {
     collection,
@@ -12,7 +12,7 @@ import {
 import db, { saveAnnotations } from "@/lib/server/firebase";
 import { Annotation, Task, StatusFilter } from "../schemas";
 
-export const useTaskAnnotations = (userId: string | undefined) => {
+export const useTaskAnnotations = (userId?: string | undefined) => {
     const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
     const [tasks, setTasks] = useState<Task[]>([]);
 
@@ -24,52 +24,54 @@ export const useTaskAnnotations = (userId: string | undefined) => {
 
     const [isLoading, setIsLoading] = useState(false);
 
-    useEffect(() => {
-        const fetchTasks = async () => {
-            setIsLoading(true);
+    const fetchTasks = useCallback(async () => {
+        setIsLoading(true);
 
-            try {
-                const userDocRef = doc(db, "users", userId!);
-                const userDoc = await getDoc(userDocRef);
+        try {
+            const userDocRef = doc(db, "users", userId!);
+            const userDoc = await getDoc(userDocRef);
 
-                if (!userDoc.exists())
-                    throw new Error("User document not found");
+            if (!userDoc.exists()) throw new Error("User document not found");
 
-                const taskIds = userDoc.data().tasks || [];
+            const taskIds = userDoc.data().tasks || [];
 
-                if (!Array.isArray(taskIds) || taskIds.length === 0) {
-                    setTasks([]);
-                    setFilteredTasks([]);
-                    setAnnotations([]);
-                    return;
-                }
-
-                const tasksQuery = query(
-                    collection(db, "tasks"),
-                    where("__name__", "in", taskIds.slice(0, 10))
-                );
-
-                const querySnapshot = await getDocs(tasksQuery);
-
-                const fetchedTasks: Task[] = querySnapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                })) as Task[];
-
-                setTasks(fetchedTasks);
-                setFilteredTasks(fetchedTasks);
-                if (fetchedTasks.length > 0)
-                    setAnnotations(fetchedTasks[0].annotations || []);
-            } catch (err) {
-                console.error(err);
-                setError("Failed to fetch tasks. Please try again.");
-            } finally {
-                setIsLoading(false);
+            if (!Array.isArray(taskIds) || taskIds.length === 0) {
+                setTasks([]);
+                setFilteredTasks([]);
+                setAnnotations([]);
+                return;
             }
-        };
 
+            const tasksQuery = query(
+                collection(db, "tasks"),
+                where("__name__", "in", taskIds.slice(0, 10))
+            );
+
+            const querySnapshot = await getDocs(tasksQuery);
+
+            const fetchedTasks: Task[] = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            })) as Task[];
+
+            setTasks(fetchedTasks);
+            setFilteredTasks(fetchedTasks);
+
+            if (fetchedTasks.length > 0)
+                setAnnotations(
+                    fetchedTasks[currentTaskIndex || 0].annotations || []
+                );
+        } catch (err) {
+            console.error(err);
+            setError("Failed to fetch tasks. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
+    }, [currentTaskIndex, userId]);
+
+    useEffect(() => {
         if (userId) fetchTasks();
-    }, [userId]);
+    }, [fetchTasks, userId]);
 
     useEffect(() => {
         setFilteredTasks(
@@ -78,7 +80,7 @@ export const useTaskAnnotations = (userId: string | undefined) => {
                 : tasks.filter((task) => task.status === currentFilter)
         );
         setCurrentTaskIndex(0);
-    }, [currentFilter, tasks]);
+    }, [currentFilter]);
 
     useEffect(() => {
         if (filteredTasks.length > 0) {
@@ -89,39 +91,29 @@ export const useTaskAnnotations = (userId: string | undefined) => {
     const currentTask = filteredTasks[currentTaskIndex];
 
     const handleSave = async (status?: Task["status"]) => {
+        if (!currentTask.imageURL) return;
+
         try {
-            await saveAnnotations(currentTask.id, annotations);
-            const updatedTasks = tasks.map((task) =>
-                task.id === currentTask.id
-                    ? {
-                          ...task,
-                          annotations: annotations,
-                          status: status || "Completed",
-                      }
-                    : task
-            );
-            setTasks(updatedTasks);
-            setFilteredTasks(
-                currentFilter === "All"
-                    ? updatedTasks
-                    : updatedTasks.filter(
-                          (task) => task.status === currentFilter
-                      )
-            );
+            await saveAnnotations(currentTask.id, annotations, status);
+            await fetchTasks();
         } catch (err) {
             console.error(err);
             setError("Failed to save annotations. Please try again.");
         }
     };
 
-    const handleNextTask = () => {
+    const handleNextTask = async () => {
+        await handleSave(currentTask.status);
+
         if (currentTaskIndex < filteredTasks.length - 1) {
             setCurrentTaskIndex(currentTaskIndex + 1);
             setAnnotations([]);
         }
     };
 
-    const handlePreviousTask = () => {
+    const handlePreviousTask = async () => {
+        await handleSave(currentTask.status);
+
         if (currentTaskIndex > 0) {
             setCurrentTaskIndex(currentTaskIndex - 1);
             setAnnotations([]);
