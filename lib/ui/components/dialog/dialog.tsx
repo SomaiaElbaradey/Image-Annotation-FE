@@ -13,7 +13,6 @@ type DialogProps = {
   trigger?: React.ReactNode
   children: React.ReactNode
   onOpenChange?: (state: boolean) => void
-  hideClose?: boolean
   closeOnMaskClick?: boolean
   classNames?: {
     content?: string
@@ -23,7 +22,6 @@ type DialogProps = {
 const Dialog = forwardRef<HTMLDialogElement, DialogProps>(
   (
     {
-      hideClose,
       trigger,
       children,
       className,
@@ -54,7 +52,6 @@ const Dialog = forwardRef<HTMLDialogElement, DialogProps>(
         <DialogRoot
           ref={(element) => setDialogRef(element)}
           className={className}
-          hideCloseIcon={hideClose}
           {...rest}
           onClick={(event) => {
             const isDialog = event.target === dialogRef
