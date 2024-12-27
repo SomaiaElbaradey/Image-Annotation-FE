@@ -15,8 +15,9 @@ export const useCanvas = (
     imageUrl: string
 ) => {
     const [currentRect, setCurrentRect] = useState<Annotation | null>(null);
-    const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const containerRef = useRef<HTMLDivElement | null>(null);
 
     const drawAnnotations = useCallback(
@@ -111,7 +112,7 @@ export const useCanvas = (
     };
 
     const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-        if (!currentRect || !canvasRef.current) return;
+        if (isDialogOpen || !currentRect || !canvasRef.current) return;
 
         const canvas = canvasRef.current;
         const rect = canvas.getBoundingClientRect();
@@ -126,12 +127,14 @@ export const useCanvas = (
         );
     };
 
-    const handleMouseUp = () => {
+    const handleDialogOpen = (status: boolean) => setIsDialogOpen(status);
+
+    const handleMouseUp = (text: string) => {
         if (currentRect) {
-            const text = prompt("Enter annotation text:") || "";
             const annotatedRect = { ...currentRect, text };
             setAnnotations([...annotations, annotatedRect]);
             setCurrentRect(null);
+            setIsDialogOpen(false);
             redrawCanvas(imageUrl);
         }
     };
@@ -143,5 +146,8 @@ export const useCanvas = (
         handleMouseMove,
         handleMouseUp,
         redrawCanvas,
+        isDialogOpen,
+        handleDialogOpen,
+        currentRect,
     } as const;
 };
