@@ -26,6 +26,7 @@ export default {
                     warningLight: "#FFF8E1",
                     dangerLight: "#FFEBEE",
                     positiveLight: "#E8F5E9",
+                    purpleLight: "#E9D8FD",
                 },
                 content: {
                     primary: "#002855",
@@ -34,6 +35,14 @@ export default {
                 },
                 borderColor: {
                     DEFAULT: "#D1D9E6",
+                },
+                purple: {
+                    DEFAULT: "#70359f",
+                    light: "#E9D8FD",
+                },
+                positive: {
+                    DEFAULT: "#3d8b40",
+                    light: "#E8F5E9",
                 },
             },
         },

@@ -71,7 +71,7 @@ type ErrorCode = keyof typeof errorMessages;
 export function getErrorMessage(firebaseError: string): string {
     const errorCode = firebaseError
         .split("auth/")[1]
-        .split(")")[0] as ErrorCode;
+        .split(")")[0] satisfies ErrorCode;
 
     return errorMessages[`auth/${errorCode}`] || "An unknown error occurred.";
 }
