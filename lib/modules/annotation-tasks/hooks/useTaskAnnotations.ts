@@ -91,7 +91,7 @@ export const useTaskAnnotations = (userId?: string | undefined) => {
     const currentTask = filteredTasks[currentTaskIndex];
 
     const handleSave = async (status?: Task["status"]) => {
-        if (!currentTask.imageURL) return;
+        if (!currentTask?.imageURL) return;
 
         try {
             await saveAnnotations(currentTask.id, annotations, status);
@@ -138,5 +138,6 @@ export const useTaskAnnotations = (userId?: string | undefined) => {
         currentFilter,
         tasks,
         isLoading,
+        fetchTasks,
     } as const;
 };

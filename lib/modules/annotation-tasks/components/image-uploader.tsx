@@ -10,7 +10,7 @@ export default function ImageUploader({ handleFileChange, handleUpload, uploadin
     return (
         <div className="flex space-x-4 mt-4">
             <Input type="file" onChange={handleFileChange} />
-            <Button onClick={handleUpload} disabled={uploading} size={'small'} variant={'text'} className="p-1 h-auto min-w-0 whitespace-nowrap">
+            <Button onClick={handleUpload} disabled={uploading} size='small' variant='text' className="p-1 h-auto min-w-0 whitespace-nowrap">
                 {uploading ? "Uploading..." : "Upload Image"}
             </Button>
         </div>
