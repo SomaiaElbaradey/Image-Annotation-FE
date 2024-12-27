@@ -60,7 +60,7 @@ const DialogRoot = forwardRef<
     {...props}
   >
     <div
-      className={cn('relative h-[350px] w-[350px] p-4', classNames?.content)}
+      className={cn('relative w-[350px] min-h-[100px] max-h-[80vh] overflow-y-auto p-4', classNames?.content)}
     >
       {children}
     </div>
