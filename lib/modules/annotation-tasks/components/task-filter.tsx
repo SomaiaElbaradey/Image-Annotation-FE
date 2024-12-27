@@ -16,7 +16,12 @@ export default function TaskStatusFilter({ currentStatus, onStatusChange }: Task
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant='tertiary' size='small' className="w-[25%] items-center" trailingIcon={<ChevronRight></ChevronRight>}>
+                <Button
+                    variant='tertiary'
+                    size='small'
+                    className="w-full sm:w-[25%] items-center my-2"
+                    trailingIcon={<ChevronRight />}
+                >
                     {currentStatus} Tasks
                 </Button>
             </DropdownMenuTrigger>

@@ -1,16 +1,20 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Annotation } from '../schemas';
-import { Table, TableCaption, TableHeader, TableRow, TableHead, TableBody, TableCell, Typography, Button } from '@/lib/ui';
+
+import { Table, TableCaption, TableHeader, TableRow, TableHead, TableBody, TableCell, Typography, Button, Badge } from '@/lib/ui';
+
+import { Annotation, Task } from '../schemas';
+import { statusToBadgeState } from '../utils';
 
 const ITEMS_PER_PAGE = 17;
 
 interface AnnotationListProps {
     annotations: Annotation[];
+    currentTask: Task
 }
 
-export default function AnnotationList({ annotations }: AnnotationListProps) {
+export default function AnnotationList({ annotations, currentTask }: AnnotationListProps) {
     const [currentPage, setCurrentPage] = useState(1);
 
     const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
@@ -24,10 +28,11 @@ export default function AnnotationList({ annotations }: AnnotationListProps) {
 
     return (
         <div className="my-5">
-            <Typography.ST1 className="font-bold mb-4">Current Annotations:</Typography.ST1>
+            <Typography.ST1 className="font-bold">Current Annotations:</Typography.ST1>
+            <Badge className="mx-1" state={statusToBadgeState[currentTask?.status]}>{currentTask?.status}</Badge>
             {annotations?.length ?
                 <>
-                    <Table>
+                    <Table className='mt-2'>
                         <TableCaption>List of current annotations on the image</TableCaption>
                         <TableHeader>
                             <TableRow className="sticky top-0 bg-white">

@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 
-import { Button, Progress, Spinner, Typography } from "@/lib/ui";
+import { Alert, Button, Progress, Spinner, Typography } from "@/lib/ui";
 
 import { useTaskAnnotations } from "../hooks/useTaskAnnotations";
 import { useImageUpload } from "../hooks/useImageUpload";
@@ -69,6 +69,7 @@ export default function CanvasAnnotation() {
                                 Task Progress: {completedTasks?.length} of {tasks.length}
                             </Typography.ST1>
                             <Progress
+                                className="mt-1"
                                 value={((completedTasks?.length || 0) / tasks.length) * 100}
                             />
                         </div>
@@ -84,15 +85,16 @@ export default function CanvasAnnotation() {
                                     handleUpload={handleUpload}
                                     uploading={uploading}
                                 />}
-                                <Button onClick={() => handleSave()} variant='primary'
+                                {!currentTask?.imageURL && <Alert className="mt-4" variant='pending' >Warning: Please upload an image to save your annotations.</Alert>}
+                                <Button onClick={() => handleSave('Completed')} variant='primary'
                                     className="font-bold w-full lg:w-auto my-4"
-                                    disabled={uploading || currentTask.status === "Completed"}>
+                                    disabled={uploading || currentTask?.status === "Completed" || !currentTask?.imageURL}>
                                     Save Annotations
                                 </Button>
                             </div>
                             <div className="w-full lg:w-1/2">
                                 {error && <p className="text-red-500 mt-2 mb-4">{error}</p>}
-                                <AnnotationList annotations={annotations} />
+                                <AnnotationList annotations={annotations} currentTask={currentTask} />
                                 <div className="flex justify-between w-full mb-6">
                                     <Button size='small' onClick={handlePreviousTask} variant='secondary' disabled={currentTaskIndex === 0}>
                                         Previous Task
