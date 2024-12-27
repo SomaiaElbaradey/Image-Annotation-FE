@@ -30,9 +30,7 @@ export default function Badge({
             className={cn(badgeVariants({ state, type, size }), className)}
             {...rest}
         >
-            <div className="flex items-center gap-1">
-                <TextWrapper>{children}</TextWrapper>
-            </div>
+            <TextWrapper>{children}</TextWrapper>
         </PrimitiveBadge>
     )
 }
