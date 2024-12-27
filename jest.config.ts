@@ -1,7 +1,10 @@
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
     transform: {
-        "^.+\\.[tj]sx?$": ["babel-jest"],
+        "^.+\\.(js|jsx|ts|tsx)$": [
+            "babel-jest",
+            { configFile: "./babel.config.tes.js" },
+        ],
     },
     moduleFileExtensions: ["ts", "tsx", "js", "jsx"],
     coverageDirectory: "../libs/ui",
