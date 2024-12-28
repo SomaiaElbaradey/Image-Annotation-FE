@@ -13,6 +13,8 @@ interface AnnotationCanvasProps {
 
 export default function AnnotationCanvas({ annotations, setAnnotations, imageUrl }: AnnotationCanvasProps) {
     const [annotationText, setAnnotationText] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+
     const dialogRef = useRef<HTMLDialogElement | null>(null);
 
     const {
@@ -25,9 +27,25 @@ export default function AnnotationCanvas({ annotations, setAnnotations, imageUrl
         handleDialogOpen,
     } = useCanvas(annotations, setAnnotations, imageUrl);
 
-    const onSubmit = () => {
-        handleMouseUp(annotationText);
+    const onClose = () => {
         setAnnotationText("");
+        setErrorMessage("");
+        handleDialogOpen(false);
+    }
+
+    const onSubmit = () => {
+        if (annotationText.trim() === "") {
+            setErrorMessage("Please enter annotation text");
+            return;
+        }
+
+        handleMouseUp(annotationText);
+        onClose();
+    };
+
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setAnnotationText(event.target.value);
+        if (event.target.value.trim() !== "") setErrorMessage("");
     };
 
     return (
@@ -36,17 +54,20 @@ export default function AnnotationCanvas({ annotations, setAnnotations, imageUrl
                 ref={dialogRef}
                 open={isDialogOpen}
                 className='z-50'
-                onClose={() => handleDialogOpen(false)}
+                onClose={onClose}
                 closeOnMaskClick
             >
                 <div className="p-4">
                     <Typography.H3 className="font-bold mb-4">Enter Annotation Text</Typography.H3>
                     <Input
                         value={annotationText}
-                        onChange={(event) => setAnnotationText(event.target.value)}
+                        onChange={handleInputChange}
                         placeholder="Enter annotation text"
-                        className="mb-4"
+                        className="mb-2"
                     />
+                    {errorMessage && (
+                        <Typography.P1 className="text-danger mb-2">{errorMessage}</Typography.P1>
+                    )}
                     <Button onClick={onSubmit} variant="primary">Submit</Button>
                 </div>
             </Dialog>
