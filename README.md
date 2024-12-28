@@ -194,7 +194,7 @@ NEXT_PUBLIC_FIREBASE_API_KEY='AIzaSyA2E6evEJUCuR9Q4S8_ezF0fITEbIlgKpI'
 email: somayaelbarade@gmail.com
 password: 123456
 ```
-<img src="https://github.com/user-attachments/assets/7eff39cf-c6d7-416f-b776-c43957841ac8" height="500" />
+<img src="https://github.com/user-attachments/assets/7eff39cf-c6d7-416f-b776-c43957841ac8" width="800" />
 <img src="https://github.com/user-attachments/assets/5be84204-7c9e-4d23-8372-58f0d6a8b351" width="310" />
 <img src="https://github.com/user-attachments/assets/c90f585b-002d-44b2-919c-46f83424da13" width="310" />
 <img src="https://github.com/user-attachments/assets/006f8c61-ef46-481a-abd2-62d40365ea29" width="310" />
