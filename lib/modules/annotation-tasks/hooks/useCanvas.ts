@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { Annotation } from "../schemas";
+import { PLACEHOLDER_IMG } from "../utils";
 
 type DrawArgs = {
     ctx: CanvasRenderingContext2D;
@@ -19,6 +20,8 @@ export const useCanvas = (
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const containerRef = useRef<HTMLDivElement | null>(null);
+
+    const hasPlaceHolder = imageUrl.includes(PLACEHOLDER_IMG);
 
     const drawAnnotations = useCallback(
         ({ ctx, containerWidth, canvasHeight }: DrawArgs) => {
@@ -80,9 +83,22 @@ export const useCanvas = (
                 ctx.drawImage(img, 0, 0, containerWidth, canvasHeight);
                 drawAnnotations({ ctx, containerWidth, canvasHeight });
                 drawCurrentRect({ ctx, containerWidth, canvasHeight });
+
+                if (hasPlaceHolder) {
+                    ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+                    ctx.fillRect(0, 0, containerWidth, canvasHeight);
+                    ctx.fillStyle = "white";
+                    ctx.font = "20px Arial";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        "Annotations not available for placeholder images",
+                        containerWidth / 2,
+                        canvasHeight / 2
+                    );
+                }
             };
         },
-        [drawAnnotations, drawCurrentRect]
+        [drawAnnotations, drawCurrentRect, hasPlaceHolder]
     );
 
     useEffect(() => {
@@ -94,6 +110,7 @@ export const useCanvas = (
     useEffect(() => redrawCanvas(imageUrl), [redrawCanvas, imageUrl]);
 
     const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        if (hasPlaceHolder) return;
         const canvas = canvasRef.current;
         if (!canvas) return;
 
@@ -112,7 +129,13 @@ export const useCanvas = (
     };
 
     const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-        if (isDialogOpen || !currentRect || !canvasRef.current) return;
+        if (
+            hasPlaceHolder ||
+            isDialogOpen ||
+            !currentRect ||
+            !canvasRef.current
+        )
+            return;
 
         const canvas = canvasRef.current;
         const rect = canvas.getBoundingClientRect();
@@ -136,7 +159,7 @@ export const useCanvas = (
     };
 
     const handleMouseUp = (text: string) => {
-        if (currentRect?.width && currentRect?.height) {
+        if (currentRect?.width && currentRect?.height && !hasPlaceHolder) {
             const annotatedRect = { ...currentRect, text };
             setAnnotations([...annotations, annotatedRect]);
             setIsDialogOpen(false);

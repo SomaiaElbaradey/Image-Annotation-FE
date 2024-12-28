@@ -13,8 +13,7 @@ import ImageUploader from "./image-uploader";
 import AnnotationList from "./annotation-list";
 import TaskStatusFilter from "./task-filter";
 import { TopBar } from "./TopBar";
-
-const PLACEHOLDER_IMG = "/images/placeholder.png";
+import { PLACEHOLDER_IMG } from "../utils";
 
 export default function CanvasAnnotation() {
     const { user, isLoading } = useUser();
