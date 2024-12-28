@@ -1,9 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState } from "react";
 
 import { Dialog, Button, Input, Typography } from "@/lib/ui";
 
-import { Annotation } from '../schemas';
-import { useCanvas } from '../hooks';
+import { Annotation } from "../schemas";
+import { useCanvas } from "../hooks";
 
 interface AnnotationCanvasProps {
     annotations: Annotation[];
@@ -11,7 +11,11 @@ interface AnnotationCanvasProps {
     imageUrl: string;
 }
 
-export default function AnnotationCanvas({ annotations, setAnnotations, imageUrl }: AnnotationCanvasProps) {
+export default function AnnotationCanvas({
+    annotations,
+    setAnnotations,
+    imageUrl,
+}: AnnotationCanvasProps) {
     const [annotationText, setAnnotationText] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -31,7 +35,7 @@ export default function AnnotationCanvas({ annotations, setAnnotations, imageUrl
         setAnnotationText("");
         setErrorMessage("");
         handleDialogOpen(false);
-    }
+    };
 
     const onSubmit = () => {
         if (annotationText.trim() === "") {
@@ -53,12 +57,14 @@ export default function AnnotationCanvas({ annotations, setAnnotations, imageUrl
             <Dialog
                 ref={dialogRef}
                 open={isDialogOpen}
-                className='z-50'
+                className="z-50"
                 onClose={onClose}
                 closeOnMaskClick
             >
                 <div className="p-4">
-                    <Typography.H3 className="font-bold mb-4">Enter Annotation Text</Typography.H3>
+                    <Typography.H3 className="font-bold mb-4">
+                        Enter Annotation Text
+                    </Typography.H3>
                     <Input
                         value={annotationText}
                         onChange={handleInputChange}
@@ -66,9 +72,13 @@ export default function AnnotationCanvas({ annotations, setAnnotations, imageUrl
                         className="mb-2"
                     />
                     {errorMessage && (
-                        <Typography.P1 className="text-danger mb-2">{errorMessage}</Typography.P1>
+                        <Typography.P1 className="text-danger mb-2">
+                            {errorMessage}
+                        </Typography.P1>
                     )}
-                    <Button onClick={onSubmit} variant="primary">Submit</Button>
+                    <Button onClick={onSubmit} variant="primary">
+                        Submit
+                    </Button>
                 </div>
             </Dialog>
             <canvas
@@ -81,4 +91,3 @@ export default function AnnotationCanvas({ annotations, setAnnotations, imageUrl
         </div>
     );
 }
-

@@ -1,20 +1,34 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import { Table, TableCaption, TableHeader, TableRow, TableHead, TableBody, TableCell, Typography, Button, Badge } from '@/lib/ui';
+import {
+    Table,
+    TableCaption,
+    TableHeader,
+    TableRow,
+    TableHead,
+    TableBody,
+    TableCell,
+    Typography,
+    Button,
+    Badge,
+} from "@/lib/ui";
 
-import { Annotation, Task } from '../schemas';
-import { statusToBadgeState } from '../utils';
+import { Annotation, Task } from "../schemas";
+import { statusToBadgeState } from "../utils";
 
 const ITEMS_PER_PAGE = 17;
 
 interface AnnotationListProps {
     annotations: Annotation[];
-    currentTask: Task
+    currentTask: Task;
 }
 
-export default function AnnotationList({ annotations, currentTask }: AnnotationListProps) {
+export default function AnnotationList({
+    annotations,
+    currentTask,
+}: AnnotationListProps) {
     const [currentPage, setCurrentPage] = useState(1);
 
     const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
@@ -28,12 +42,21 @@ export default function AnnotationList({ annotations, currentTask }: AnnotationL
 
     return (
         <div className="my-4">
-            <Typography.ST1 className="font-bold">Current Annotations:</Typography.ST1>
-            <Badge className="mx-1" state={statusToBadgeState[currentTask?.status]}>{currentTask?.status}</Badge>
-            {annotations?.length ?
+            <Typography.ST1 className="font-bold">
+                Current Annotations:
+            </Typography.ST1>
+            <Badge
+                className="mx-1"
+                state={statusToBadgeState[currentTask?.status]}
+            >
+                {currentTask?.status}
+            </Badge>
+            {annotations?.length ? (
                 <>
-                    <Table className='mt-2'>
-                        <TableCaption>List of current annotations on the image</TableCaption>
+                    <Table className="mt-2">
+                        <TableCaption>
+                            List of current annotations on the image
+                        </TableCaption>
                         <TableHeader>
                             <TableRow className="sticky top-0 bg-white">
                                 <TableHead>Position (X, Y)</TableHead>
@@ -56,17 +79,30 @@ export default function AnnotationList({ annotations, currentTask }: AnnotationL
                         </TableBody>
                     </Table>
                     <div className="mt-4 flex justify-between items-center">
-                        <Button variant='text' onClick={handlePrevPage} size='x_small' disabled={currentPage === 1}>
+                        <Button
+                            variant="text"
+                            onClick={handlePrevPage}
+                            size="x_small"
+                            disabled={currentPage === 1}
+                        >
                             Previous
                         </Button>
-                        <Typography.CP2> Page {currentPage} of {totalPages}</Typography.CP2>
-                        <Button variant='text' onClick={handleNextPage} size='x_small' disabled={currentPage === totalPages}>
+                        <Typography.CP2>
+                            Page {currentPage} of {totalPages}
+                        </Typography.CP2>
+                        <Button
+                            variant="text"
+                            onClick={handleNextPage}
+                            size="x_small"
+                            disabled={currentPage === totalPages}
+                        >
                             Next
                         </Button>
                     </div>
                 </>
-                : <Typography.CP2> No annotations available.</Typography.CP2>}
+            ) : (
+                <Typography.CP2> No annotations available.</Typography.CP2>
+            )}
         </div>
     );
 }
-
