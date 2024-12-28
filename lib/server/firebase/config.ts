@@ -14,4 +14,5 @@ export const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
+// setLogLevel("debug");
 export default app;

@@ -27,7 +27,7 @@ export default function AnnotationList({ annotations, currentTask }: AnnotationL
     const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
 
     return (
-        <div className="my-5">
+        <div className="my-4">
             <Typography.ST1 className="font-bold">Current Annotations:</Typography.ST1>
             <Badge className="mx-1" state={statusToBadgeState[currentTask?.status]}>{currentTask?.status}</Badge>
             {annotations?.length ?

@@ -1,9 +1,9 @@
 import React from 'react'
 
 import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuRadioGroup, DropdownMenuRadioItem } from '@/lib/ui'
+import { ChevronRight } from '@/lib/ui/icons'
 
 import { StatusFilter } from '../schemas'
-import { ChevronRight } from '@/lib/ui/icons'
 
 interface TaskStatusFilterProps {
     currentStatus: StatusFilter

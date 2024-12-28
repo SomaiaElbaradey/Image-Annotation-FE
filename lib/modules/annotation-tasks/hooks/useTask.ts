@@ -1,16 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect, useCallback } from "react";
 
-import {
-    collection,
-    query,
-    where,
-    getDocs,
-    doc,
-    getDoc,
-} from "firebase/firestore";
+import { saveAnnotations } from "@/lib/server/firebase";
 
-import db, { saveAnnotations } from "@/lib/server/firebase";
 import { Annotation, Task, StatusFilter } from "../schemas";
+import { fetchUserTasks } from "../api";
 
 export const useTaskAnnotations = (userId?: string | undefined) => {
     const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
@@ -24,45 +18,32 @@ export const useTaskAnnotations = (userId?: string | undefined) => {
 
     const [isLoading, setIsLoading] = useState(false);
 
+    const filterTasks = useCallback(
+        (allTasks?: Task[]) =>
+            currentFilter === "All"
+                ? allTasks || tasks
+                : (allTasks || tasks).filter(
+                      (task) => task.status === currentFilter
+                  ),
+        [currentFilter, tasks]
+    );
+
     const fetchTasks = useCallback(async () => {
+        if (!userId) return;
         setIsLoading(true);
 
         try {
-            const userDocRef = doc(db, "users", userId!);
-            const userDoc = await getDoc(userDocRef);
+            const fetchedTasks = await fetchUserTasks(userId);
 
-            if (!userDoc.exists()) throw new Error("User document not found");
+            if (fetchedTasks) {
+                setTasks(fetchedTasks);
+                setFilteredTasks(filterTasks(fetchedTasks));
 
-            const taskIds = userDoc.data().tasks || [];
-
-            if (!Array.isArray(taskIds) || taskIds.length === 0) {
-                setTasks([]);
-                setFilteredTasks([]);
-                setAnnotations([]);
-                return;
-            }
-
-            const tasksQuery = query(
-                collection(db, "tasks"),
-                where("__name__", "in", taskIds.slice(0, 10))
-            );
-
-            const querySnapshot = await getDocs(tasksQuery);
-
-            const fetchedTasks: Task[] = querySnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            })) as Task[];
-
-            setTasks(fetchedTasks);
-            setFilteredTasks(fetchedTasks);
-
-            if (fetchedTasks.length > 0)
                 setAnnotations(
                     fetchedTasks[currentTaskIndex || 0].annotations || []
                 );
-        } catch (err) {
-            console.error(err);
+            }
+        } catch (_) {
             setError("Failed to fetch tasks. Please try again.");
         } finally {
             setIsLoading(false);
@@ -74,19 +55,18 @@ export const useTaskAnnotations = (userId?: string | undefined) => {
     }, [fetchTasks, userId]);
 
     useEffect(() => {
-        setFilteredTasks(
-            currentFilter === "All"
-                ? tasks
-                : tasks.filter((task) => task.status === currentFilter)
-        );
+        const currFilteredTasks = filterTasks();
         setCurrentTaskIndex(0);
+        setFilteredTasks(currFilteredTasks);
+        setAnnotations(currFilteredTasks?.[0]?.annotations || []);
     }, [currentFilter]);
 
     useEffect(() => {
-        if (filteredTasks.length > 0) {
-            setAnnotations(filteredTasks[currentTaskIndex].annotations || []);
-        }
-    }, [filteredTasks, currentTaskIndex]);
+        const currFilteredTasks = filterTasks();
+        setAnnotations(
+            currFilteredTasks?.[currentTaskIndex]?.annotations || []
+        );
+    }, [currentTaskIndex, filterTasks]);
 
     const currentTask = filteredTasks[currentTaskIndex];
 
@@ -96,8 +76,7 @@ export const useTaskAnnotations = (userId?: string | undefined) => {
         try {
             await saveAnnotations(currentTask.id, annotations, status);
             await fetchTasks();
-        } catch (err) {
-            console.error(err);
+        } catch (_) {
             setError("Failed to save annotations. Please try again.");
         }
     };
@@ -120,9 +99,7 @@ export const useTaskAnnotations = (userId?: string | undefined) => {
         }
     };
 
-    const setFilter = (filter: StatusFilter) => {
-        setCurrentFilter(filter);
-    };
+    const setFilter = (filter: StatusFilter) => setCurrentFilter(filter);
 
     return {
         currentTaskIndex,
@@ -138,6 +115,5 @@ export const useTaskAnnotations = (userId?: string | undefined) => {
         currentFilter,
         tasks,
         isLoading,
-        fetchTasks,
     } as const;
 };

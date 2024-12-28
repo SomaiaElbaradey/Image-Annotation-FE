@@ -127,16 +127,23 @@ export const useCanvas = (
         );
     };
 
-    const handleDialogOpen = (status: boolean) => setIsDialogOpen(status);
+    const handleDialogOpen = (status: boolean) => {
+        if (status && (!currentRect?.height || !currentRect.width)) {
+            setCurrentRect(null);
+            return;
+        }
+        setIsDialogOpen(status);
+    };
 
     const handleMouseUp = (text: string) => {
-        if (currentRect) {
+        if (currentRect?.width && currentRect?.height) {
             const annotatedRect = { ...currentRect, text };
             setAnnotations([...annotations, annotatedRect]);
-            setCurrentRect(null);
             setIsDialogOpen(false);
             redrawCanvas(imageUrl);
         }
+
+        setCurrentRect(null);
     };
 
     return {
