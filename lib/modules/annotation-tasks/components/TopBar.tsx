@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 
-import { Button, Typography } from '@/lib/ui';
-import { deleteSessionCookie } from '@/lib/server/cookie';
-import { auth } from '@/lib/server/firebase';
+import { Button, Typography } from "@/lib/ui";
+import { deleteSessionCookie } from "@/lib/server/cookie";
+import { auth } from "@/lib/server/firebase";
 
-import { signOut } from 'firebase/auth';
-import { useState } from 'react';
+import { signOut } from "firebase/auth";
+import { useState } from "react";
 
 export function TopBar() {
     const router = useRouter();
@@ -37,7 +37,7 @@ export function TopBar() {
                 <div>
                     <Button
                         onClick={handleLogout}
-                        variant='text'
+                        variant="text"
                         loading={isLoading}
                     >
                         Logout
@@ -47,4 +47,3 @@ export function TopBar() {
         </div>
     );
 }
-

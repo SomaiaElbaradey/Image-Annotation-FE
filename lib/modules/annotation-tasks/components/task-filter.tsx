@@ -1,24 +1,34 @@
-import React from 'react'
+import React from "react";
 
-import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuRadioGroup, DropdownMenuRadioItem } from '@/lib/ui'
-import { ChevronRight } from '@/lib/ui/icons'
+import {
+    Button,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+    DropdownMenuRadioGroup,
+    DropdownMenuRadioItem,
+} from "@/lib/ui";
+import { ChevronRight } from "@/lib/ui/icons";
 
-import { StatusFilter } from '../schemas'
+import { StatusFilter } from "../schemas";
 
 interface TaskStatusFilterProps {
-    currentStatus: StatusFilter
-    onStatusChange: (status: StatusFilter) => void
+    currentStatus: StatusFilter;
+    onStatusChange: (status: StatusFilter) => void;
 }
 
-const statuses: StatusFilter[] = ['All', 'Pending', 'In Progress', 'Completed']
+const statuses: StatusFilter[] = ["All", "Pending", "In Progress", "Completed"];
 
-export default function TaskStatusFilter({ currentStatus, onStatusChange }: TaskStatusFilterProps) {
+export default function TaskStatusFilter({
+    currentStatus,
+    onStatusChange,
+}: TaskStatusFilterProps) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button
-                    variant='tertiary'
-                    size='small'
+                    variant="tertiary"
+                    size="small"
                     className="w-full sm:w-[25%] items-center my-2"
                     trailingIcon={<ChevronRight />}
                 >
@@ -26,7 +36,12 @@ export default function TaskStatusFilter({ currentStatus, onStatusChange }: Task
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-[200px]">
-                <DropdownMenuRadioGroup value={currentStatus} onValueChange={(status) => onStatusChange(status as StatusFilter)}>
+                <DropdownMenuRadioGroup
+                    value={currentStatus}
+                    onValueChange={(status) =>
+                        onStatusChange(status as StatusFilter)
+                    }
+                >
                     {statuses.map((status) => (
                         <DropdownMenuRadioItem
                             key={status}
@@ -39,6 +54,5 @@ export default function TaskStatusFilter({ currentStatus, onStatusChange }: Task
                 </DropdownMenuRadioGroup>
             </DropdownMenuContent>
         </DropdownMenu>
-    )
+    );
 }
-
