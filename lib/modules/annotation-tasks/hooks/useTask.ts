@@ -71,7 +71,7 @@ export const useTaskAnnotations = (userId?: string | undefined) => {
     const currentTask = filteredTasks[currentTaskIndex];
 
     const handleSave = async (status?: Task["status"]) => {
-        if (!currentTask?.imageURL) return;
+        if (!currentTask?.imageURL || !annotations.length) return;
 
         try {
             await saveAnnotations(currentTask.id, annotations, status);
@@ -82,7 +82,11 @@ export const useTaskAnnotations = (userId?: string | undefined) => {
     };
 
     const handleNextTask = async () => {
-        await handleSave(currentTask.status);
+        await handleSave(
+            currentTask.status === "Pending"
+                ? "In Progress"
+                : currentTask.status
+        );
 
         if (currentTaskIndex < filteredTasks.length - 1) {
             setCurrentTaskIndex(currentTaskIndex + 1);
@@ -91,7 +95,11 @@ export const useTaskAnnotations = (userId?: string | undefined) => {
     };
 
     const handlePreviousTask = async () => {
-        await handleSave(currentTask.status);
+        await handleSave(
+            currentTask.status === "Pending"
+                ? "In Progress"
+                : currentTask.status
+        );
 
         if (currentTaskIndex > 0) {
             setCurrentTaskIndex(currentTaskIndex - 1);
